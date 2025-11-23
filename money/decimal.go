@@ -2,6 +2,7 @@ package money
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 )
@@ -58,8 +59,23 @@ func (d *Decimal) simplify() {
 	// Using %10 returns the last digit in base 10 of a number
 	// If the precision is positive, that digit belongs
 	// to the right side of the decimal separator
-	for d.subunits % 10 == 0 && d.precision > 0 {
+	for d.subunits%10 == 0 && d.precision > 0 {
 		d.precision--
 		d.subunits /= 10
+	}
+}
+
+func pow10(power byte) int64 {
+	switch power {
+	case 0:
+		return 1
+	case 1:
+		return 10
+	case 2:
+		return 100
+	case 3:
+		return 1000
+	default:
+		return int64(math.Pow(10, float64(power)))
 	}
 }

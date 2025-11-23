@@ -17,9 +17,19 @@ func NewAmount(quantity Decimal, currency Currency) (Amount, error) {
 		return Amount{}, ErrTooPrecise
 	}
 	quantity.precision = currency.precision
-	
+
 	return Amount{
 		quantity: quantity,
 		currency: currency,
 	}, nil
+}
+
+// validate returns an error if and only if an Amount is unsafe to use.
+func (a Amount) validate() error {
+	switch {
+	case a.quantity.subunits > maxDecimal:
+	case a.quantity.precision > a.currency.precision:
+		return ErrTooPrecise
+	}
+	return nil
 }
