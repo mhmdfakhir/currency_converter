@@ -55,6 +55,22 @@ func ParseDecimal(value string) (Decimal, error) {
 	return retVal, nil
 }
 
+// String implements Stringer.
+func (d *Decimal) String() string {
+	// Quick-win, no editing needed.
+	if d.precision == 0 {
+		return fmt.Sprintf("%d", d.subunits)
+	}
+
+	centsPerUnit := pow10(d.precision)
+	frac := d.subunits % centsPerUnit
+	integer := d.subunits / centsPerUnit
+
+	decimalFormat := "%d.%0" + strconv.Itoa(int(d.precision)) + "d"
+	
+	return fmt.Sprintf(decimalFormat, integer, frac)
+}
+
 func (d *Decimal) simplify() {
 	// Using %10 returns the last digit in base 10 of a number
 	// If the precision is positive, that digit belongs
